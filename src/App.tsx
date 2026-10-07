@@ -1,14 +1,22 @@
 import { useState } from 'react'
 import type { TipInput } from './types'
+import { calculateTip } from './lib/calculate'
+import { formatEuro } from './lib/format'
 
 const EMPTY_INPUT: TipInput = { amount: '', tipPercent: '', people: '' }
 
 export default function App() {
   const [input, setInput] = useState<TipInput>(EMPTY_INPUT)
+  const [touched, setTouched] = useState(false)
 
   function update(field: keyof TipInput, value: string) {
+    setTouched(true)
     setInput((prev) => ({ ...prev, [field]: value }))
   }
+
+  const outcome = touched ? calculateTip(input) : null
+  const result = outcome && outcome.ok ? outcome.result : null
+  const error = outcome && !outcome.ok ? outcome.error : null
 
   return (
     <main className="page">
@@ -88,24 +96,66 @@ export default function App() {
           </div>
         </section>
 
-        <section className="panel" aria-labelledby="result-title">
+        <section
+          className={result ? 'panel panel--result-valid' : 'panel'}
+          aria-labelledby="result-title"
+        >
           <h2 className="panel-title" id="result-title">
             Ergebnis
           </h2>
-          <dl className="results">
-            <div className="result-row">
-              <dt className="result-label">Trinkgeld</dt>
-              <dd className="result-value">—</dd>
+
+          {result ? (
+            <dl className="results">
+              <div className="result-row">
+                <dt className="result-label">Trinkgeld</dt>
+                <dd className="result-value">{formatEuro(result.tip)}</dd>
+              </div>
+              <div className="result-row">
+                <dt className="result-label">Gesamt</dt>
+                <dd className="result-value result-value-primary">
+                  {formatEuro(result.total)}
+                </dd>
+              </div>
+              <div className="result-row">
+                <dt className="result-label">Betrag pro Person</dt>
+                <dd className="result-value">{formatEuro(result.perPerson)}</dd>
+              </div>
+            </dl>
+          ) : error ? (
+            <div className="error" role="alert" aria-live="polite">
+              <svg
+                className="error-icon"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M7.13 2.5a1 1 0 0 1 1.74 0l5.5 8.9A1 1 0 0 1 13.5 13h-11a1 1 0 0 1-.87-1.5l5.5-9Z"
+                  fill="currentColor"
+                />
+                <rect x="7.25" y="5.6" width="1.5" height="3.3" rx="0.6" fill="#fff" />
+                <circle cx="8" cy="10.5" r="0.85" fill="#fff" />
+              </svg>
+              <span>{error}</span>
             </div>
-            <div className="result-row">
-              <dt className="result-label">Gesamt</dt>
-              <dd className="result-value result-value-primary">—</dd>
-            </div>
-            <div className="result-row">
-              <dt className="result-label">Betrag pro Person</dt>
-              <dd className="result-value">—</dd>
-            </div>
-          </dl>
+          ) : (
+            <dl className="results">
+              <div className="result-row">
+                <dt className="result-label">Trinkgeld</dt>
+                <dd className="result-value result-value-empty">—</dd>
+              </div>
+              <div className="result-row">
+                <dt className="result-label">Gesamt</dt>
+                <dd className="result-value result-value-primary result-value-empty">
+                  —
+                </dd>
+              </div>
+              <div className="result-row">
+                <dt className="result-label">Betrag pro Person</dt>
+                <dd className="result-value result-value-empty">—</dd>
+              </div>
+            </dl>
+          )}
         </section>
       </div>
     </main>
