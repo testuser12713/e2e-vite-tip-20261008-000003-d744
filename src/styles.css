@@ -1,0 +1,231 @@
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-fg: #111827;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+  --color-accent: #0f766e;
+  --color-accent-hover: #0d6a63;
+  --color-accent-active: #0a564f;
+  --color-accent-soft: #e6f2f0;
+  --color-accent-fg: #ffffff;
+  --color-error: #b42318;
+  --color-error-bg: #fef3f2;
+  --color-error-border: #fda29b;
+  --color-focus-ring: #0f766e40;
+
+  --space-0: 4px;
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
+  --size-label: 14px;
+  --size-helper: 13px;
+  --size-heading: 20px;
+  --size-result: 26px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--space-5) var(--space-3);
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 480px;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  margin: 0 0 var(--space-0);
+  font-size: var(--size-heading);
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: var(--size-helper);
+  color: var(--color-muted);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.panel-title {
+  margin: 0;
+  font-size: var(--size-label);
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  margin-bottom: var(--space-1);
+  font-size: var(--size-label);
+  font-weight: 500;
+  color: var(--color-fg);
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-fg);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  outline: none;
+}
+
+.field-input::placeholder {
+  color: #9ca3af;
+}
+
+.field-input:hover {
+  border-color: #b9bfc7;
+}
+
+.field-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.field-input:disabled {
+  background: var(--color-surface);
+  opacity: 0.6;
+}
+
+.input-suffix {
+  position: absolute;
+  right: 12px;
+  font-size: var(--size-label);
+  color: var(--color-muted);
+  pointer-events: none;
+}
+
+.field-helper {
+  margin: var(--space-0) 0 0;
+  font-size: var(--size-helper);
+  color: var(--color-muted);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.result-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: var(--space-2) 0;
+}
+
+.result-row + .result-row {
+  border-top: 1px solid var(--color-border);
+}
+
+.result-label {
+  margin: 0;
+  font-size: var(--size-label);
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.result-value {
+  margin: 0;
+  font-size: var(--size-result);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #9ca3af;
+}
+
+.result-value-primary {
+  color: var(--color-accent);
+}
+
+@media (max-width: 640px) {
+  .panel {
+    padding: var(--space-3);
+  }
+}
+
+@media (min-width: 640px) {
+  .page {
+    align-items: flex-start;
+    padding-top: var(--space-6);
+  }
+}
