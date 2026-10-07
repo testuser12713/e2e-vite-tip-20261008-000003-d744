@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trinkgeld-Rechner — Übersicht</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page" data-od-id="mockup-overview">
+    <div class="container">
+      <h1 class="page-heading">Trinkgeld-Rechner</h1>
+      <p class="subtitle">Mockup-Übersicht — klicke einen Zustand an, um die einzelne Ansicht durchzugehen.</p>
+
+      <nav class="launcher-list">
+        <a class="launcher-card" href="neutral.html" data-od-id="launcher-neutral">
+          <span class="launcher-card__badge">Startzustand</span>
+          <h2 class="launcher-card__title">Neutral</h2>
+          <p class="launcher-card__desc">Felder unberührt — Ergebnisse zeigen „—“, keine Fehlermeldung (AC-05).</p>
+        </a>
+        <a class="launcher-card" href="results.html" data-od-id="launcher-results">
+          <span class="launcher-card__badge">Gültige Eingabe</span>
+          <h2 class="launcher-card__title">Ergebnis</h2>
+          <p class="launcher-card__desc">Betrag 100 €, 10 %, 3 Personen — Trinkgeld, Gesamt und Betrag pro Person live berechnet (AC-02/03/04).</p>
+        </a>
+        <a class="launcher-card" href="error.html" data-od-id="launcher-error">
+          <span class="launcher-card__badge">Ungültige Eingabe</span>
+          <h2 class="launcher-card__title">Fehler</h2>
+          <p class="launcher-card__desc">Negativer Betrag — der Ergebnisbereich wird durch eine deutsche Fehlermeldung ersetzt (AC-06).</p>
+        </a>
+      </nav>
+    </div>
+  </main>
+</body>
+</html>

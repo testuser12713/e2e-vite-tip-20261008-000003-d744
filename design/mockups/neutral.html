@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trinkgeld-Rechner — Neutral</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page" data-od-id="trinkgeld-rechner">
+    <div class="container">
+      <h1 class="page-heading" data-od-id="page-heading">Trinkgeld-Rechner</h1>
+      <p class="subtitle">Trinkgeld, Gesamt und Betrag pro Person live berechnen</p>
+
+      <section class="card" data-od-id="input-panel">
+        <div class="field">
+          <label class="label" for="betrag">Betrag</label>
+          <div class="input-wrap input-wrap--suffix">
+            <input class="input" id="betrag" type="text" inputmode="decimal" value="" placeholder="0,00" autocomplete="off" data-od-id="input-betrag">
+            <span class="suffix">€</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="prozent">Trinkgeld-Prozent</label>
+          <div class="input-wrap input-wrap--suffix">
+            <input class="input" id="prozent" type="text" inputmode="decimal" value="" placeholder="10" autocomplete="off" data-od-id="input-prozent">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="personen">Personenzahl</label>
+          <div class="input-wrap input-wrap--suffix">
+            <input class="input" id="personen" type="text" inputmode="numeric" value="" placeholder="1" autocomplete="off" data-od-id="input-personen">
+            <span class="suffix">Person(en)</span>
+          </div>
+          <p class="helper">mindestens 1</p>
+        </div>
+      </section>
+
+      <section class="card" id="result-panel" data-od-id="result-panel"></section>
+
+      <nav class="mockup-nav">
+        <span class="mockup-nav__label">Mockup:</span>
+        <a href="index.html">Übersicht</a>
+        <a href="neutral.html" class="is-current">Neutral</a>
+        <a href="results.html">Ergebnis</a>
+        <a href="error.html">Fehler</a>
+      </nav>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var fields = {
+        betrag: document.getElementById('betrag'),
+        prozent: document.getElementById('prozent'),
+        personen: document.getElementById('personen')
+      };
+      var panel = document.getElementById('result-panel');
+
+      var INITIAL_TOUCHED = { betrag: false, prozent: false, personen: false };
+      var touched = { betrag: false, prozent: false, personen: false };
+
+      var MESSAGES = {
+        betrag: 'Bitte für den Betrag eine Zahl von 0 oder größer eingeben.',
+        prozent: 'Bitte für das Trinkgeld-Prozent eine Zahl von 0 oder größer eingeben.',
+        personen: 'Bitte für die Personenzahl eine Zahl von 1 oder größer eingeben.'
+      };
+
+      function parseNumber(s) {
+        var t = String(s).replace(/\s/g, '');
+        if (t === '') return null;
+        if (t.indexOf(',') !== -1) t = t.replace(/\./g, '').replace(',', '.');
+        var n = Number(t);
+        return Number.isFinite(n) ? n : null;
+      }
+
+      function toCents(n) { return Math.round(n * 100); }
+
+      function formatEuro(cents) {
+        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(cents / 100);
+      }
+
+      function anyTouched() {
+        return touched.betrag || touched.prozent || touched.personen;
+      }
+
+      function firstInvalid() {
+        if (touched.betrag) { var b = parseNumber(fields.betrag.value); if (b === null || b < 0) return 'betrag'; }
+        if (touched.prozent) { var p = parseNumber(fields.prozent.value); if (p === null || p < 0) return 'prozent'; }
+        if (touched.personen) { var n = parseNumber(fields.personen.value); if (n === null || n < 1) return 'personen'; }
+        return null;
+      }
+
+      function row(label, valueHtml, primary) {
+        return '<div class="result-row' + (primary ? ' result-row--primary' : '') + '">' +
+          '<span class="result-label">' + label + '</span>' + valueHtml + '</div>';
+      }
+
+      var emptyValue = '<span class="result-value result-value--empty">—</span>';
+
+      function neutralHtml() {
+        return row('Trinkgeld', emptyValue) +
+               row('Gesamt', emptyValue, true) +
+               row('Betrag pro Person', emptyValue);
+      }
+
+      function resultHtml(tipCents, totalCents, perCents) {
+        return row('Trinkgeld', '<span class="result-value">' + formatEuro(tipCents) + '</span>') +
+               row('Gesamt', '<span class="result-value">' + formatEuro(totalCents) + '</span>', true) +
+               row('Betrag pro Person', '<span class="result-value">' + formatEuro(perCents) + '</span>');
+      }
+
+      function errorHtml(field) {
+        return '<div class="error" role="alert" aria-live="polite">' +
+          '<svg class="error__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">' +
+          '<path d="M7.13 2.5a1 1 0 0 1 1.74 0l5.5 8.9A1 1 0 0 1 13.5 13h-11a1 1 0 0 1-.87-1.5l5.5-9Z" fill="currentColor"/>' +
+          '<rect x="7.25" y="5.6" width="1.5" height="3.3" rx="0.6" fill="#fff"/>' +
+          '<circle cx="8" cy="10.5" r="0.85" fill="#fff"/>' +
+          '</svg><span>' + MESSAGES[field] + '</span></div>';
+      }
+
+      function render() {
+        var invalid = firstInvalid();
+        ['betrag', 'prozent', 'personen'].forEach(function (k) {
+          fields[k].classList.toggle('is-invalid', invalid === k);
+        });
+
+        if (!anyTouched()) {
+          panel.classList.remove('card--result-valid');
+          panel.innerHTML = neutralHtml();
+          return;
+        }
+        if (invalid) {
+          panel.classList.remove('card--result-valid');
+          panel.innerHTML = errorHtml(invalid);
+          return;
+        }
+
+        var betragCents = toCents(parseNumber(fields.betrag.value));
+        var prozent = parseNumber(fields.prozent.value);
+        var personen = parseNumber(fields.personen.value);
+        var tipCents = Math.round(betragCents * prozent / 100);
+        var totalCents = betragCents + tipCents;
+        var perCents = Math.round(totalCents / personen);
+        panel.classList.add('card--result-valid');
+        panel.innerHTML = resultHtml(tipCents, totalCents, perCents);
+      }
+
+      ['betrag', 'prozent', 'personen'].forEach(function (k) {
+        fields[k].addEventListener('input', function () {
+          touched[k] = true;
+          render();
+        });
+      });
+
+      Object.keys(INITIAL_TOUCHED).forEach(function (k) {
+        if (INITIAL_TOUCHED[k]) touched[k] = true;
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
